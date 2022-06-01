@@ -1,0 +1,40 @@
+{#
+/**
+ * @file
+ * Formats album image pager block.
+ */
+#}
+{% trans %}Uploaded on {{ created }} by{% endtrans %} <a href="{{ user_url }}">{{ image.name }}</a>
+<div class="photos-block-pager-title">
+  {% if image.slide_url %}
+    <a href="{{ image.slide_url }}" class="photos-block-pager-slide" title="{{ 'View as slideshow'|t }}"></a>
+  {% endif %}
+</div>
+<div class="photos-pager">
+  <div class="photos-block-pager-left photos-pager-image">
+    {% if image.pager.prevView %}
+      <a href="{{ image.pager.prevUrl }}#image-load">{{ image.pager.prevView }}</a>
+      <div class="photos-pager-link photos-prev">
+        <a href="{{ image.pager.prevUrl }}#image-load">{{ 'previous'|t }}</a>
+      </div>
+    {% endif %}
+  </div>
+  <div class="photos-block-pager-center photos-pager-image">
+    {% if image.pager.currentView %}
+      {{ image.pager.currentView }}
+      <div>&#9650;</div>
+    {% endif %}
+  </div>
+  <div class="photos-block-pager-right photos-pager-image">
+    {% if image.pager.nextView %}
+      <a href="{{ image.pager.nextUrl }}#image-load">{{ image.pager.nextView }}</a>
+      <div class="photos-pager-link photos-next">
+        <a href="{{ image.pager.nextUrl }}#image-load">{{ 'next'|t }}</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+<div class="photos-block-link">
+  {{ 'In'|t }} <a href="{{ album_url }}">{{ image.pager.albumTitle }}</a>
+</div>
+{{ image.links }}

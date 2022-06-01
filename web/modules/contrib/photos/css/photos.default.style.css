@@ -1,0 +1,12 @@
+.photos-link-pager {
+  position: relative;
+  min-height: 22px;
+}
+.photos-link-pager .photos-pager-left {
+  position: absolute;
+  left: 0;
+}
+.photos-link-pager .photos-pager-right {
+  position: absolute;
+  right: 0;
+}

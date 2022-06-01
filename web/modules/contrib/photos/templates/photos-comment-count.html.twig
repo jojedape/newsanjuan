@@ -1,0 +1,15 @@
+{% if comcount %}
+  {% if post_comments %}
+    <a href="{{ login_href }}">Login</a> to post comments
+  {% else %}
+    <a href="{{ url }}#comment-form">Add new comment</a>
+  {% endif %}
+{% else %}
+  <a href="{{ url }}#comments">
+    {% trans %}
+      {{ comcount }} comment
+    {% plural comcount %}
+      {{ comcount }} comments
+    {% endtrans %}
+  </a>
+{% endif %}

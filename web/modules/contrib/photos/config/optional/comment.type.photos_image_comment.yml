@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - photos
+id: photos_image_comment
+label: 'Photo Comments'
+target_entity_type_id: photos_image
+description: 'Allows commenting on images'

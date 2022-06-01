@@ -1,0 +1,17 @@
+name: 'Photos'
+description: 'Picture management module. Photo albums.'
+type: module
+core_version_requirement: ^8.8 || ^9
+package: 'photos'
+configure: photos.admin
+dependencies:
+  - drupal:field_ui
+  - drupal:image
+  - drupal:media
+  - drupal:node
+  - drupal:views
+
+# Information added by Drupal.org packaging script on 2021-09-20
+version: '6.0.2'
+project: 'photos'
+datestamp: 1632177695

@@ -1,0 +1,121 @@
+entity.photos_image.collection:
+  path: '/admin/content/photos'
+  defaults:
+    _entity_list: 'photos_image'
+    _title: 'Photos'
+  requirements:
+    _permission: 'administer nodes'
+
+photos.admin:
+  path: '/admin/structure/photos'
+  defaults:
+    _form: '\Drupal\photos\Form\PhotosAdminStructureForm'
+    _title: 'Photos'
+  requirements:
+    _permission: 'administer nodes'
+
+photos.admin.config:
+  path: '/admin/config/media/photos'
+  defaults:
+    _form: '\Drupal\photos\Form\PhotosAdminSettingsForm'
+    _title: 'Photos'
+  requirements:
+    _permission: 'administer nodes'
+
+photos.admin.legacy.config:
+  path: '/admin/config/media/photos/legacy'
+  defaults:
+    _form: '\Drupal\photos\Form\PhotosAdminLegacySettingsForm'
+    _title: 'Photos'
+  requirements:
+    _permission: 'administer nodes'
+
+photos.image.add:
+  path: '/photos/image/add'
+  defaults:
+    _entity_form: 'photos_image.add'
+  requirements:
+    _permission: 'create photo'
+  options:
+    _photos_image_operation_route: TRUE
+
+photos.import.directory:
+  path: '/photos/import'
+  defaults:
+    _form: '\Drupal\photos\Form\PhotosDirectoryImportForm'
+    _title: 'Import Photos'
+  requirements:
+    _permission: 'administer nodes'
+  options:
+    _admin_route: TRUE
+
+photos.node.management:
+  path: '/node/{node}/photos'
+  defaults:
+    _form: '\Drupal\photos\Form\PhotosUploadForm'
+    _title: 'Add Photos'
+  requirements:
+    _custom_access: '\Drupal\photos\Form\PhotosUploadForm::access'
+    node: \d+
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      node:
+        type: entity:node
+
+photos.node.rearrange:
+  path: '/node/{node}/photos-rearrange'
+  defaults:
+    _controller: '\Drupal\photos\Controller\PhotosRearrangeController::contentOverview'
+    _title_callback: '\Drupal\photos\Controller\PhotosRearrangeController::getTitle'
+  requirements:
+    _custom_access: '\Drupal\photos\Controller\PhotosRearrangeController::access'
+    node: \d+
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      node:
+        type: entity:node
+
+photos.album.rearrange:
+  path: '/user/{user}/photos/album-rearrange'
+  defaults:
+    _controller: '\Drupal\photos\Controller\PhotosRearrangeController::albumRearrange'
+    _title: 'Rearrange My Albums'
+  requirements:
+    _custom_access: '\Drupal\photos\Controller\PhotosRearrangeController::access'
+    user: \d+
+  options:
+    parameters:
+      user:
+        type: entity:user
+
+photos.ajax.rearrange:
+  path: '/photos/ajax/rearrange'
+  defaults:
+    _controller: '\Drupal\photos\Controller\PhotosRearrangeController::ajaxRearrange'
+  requirements:
+    _permission: 'create photo'
+
+photos.album.update.cover:
+  path: '/photos/{node}/cover/{photos_image}'
+  defaults:
+    _controller: '\Drupal\photos\Controller\PhotosEditController::setAlbumCover'
+  requirements:
+    _custom_access: '\Drupal\photos\Controller\PhotosEditController::access'
+    node: \d+
+    photos_image: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+      photos_image:
+        type: entity:photos_image
+
+photos.statistics.update:
+  path: '/photos/statistics-update'
+  defaults:
+    _controller: 'Drupal\photos\Controller\PhotosStatisticsUpdateController::updateCount'
+    _title: 'Photos Statistics Update'
+  requirements:
+    _permission: 'access content'

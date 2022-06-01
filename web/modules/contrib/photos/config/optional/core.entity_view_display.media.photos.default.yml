@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.photos.field_media_photos
+    - media.type.photos
+  module:
+    - photos
+id: media.photos.default
+targetEntityType: media
+bundle: photos
+mode: default
+content:
+  field_media_photos:
+    type: photos_album
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      photos_display_type: cover
+    third_party_settings: {  }
+hidden:
+  created: true
+  name: true
+  thumbnail: true
+  uid: true

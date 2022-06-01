@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - photos
+id: photos_image
+label: Photo
+type: 'canonical_entities:photos_image'
+pattern: 'photos/[photos_image:album_id:entity:title]/[photos_image:title]'
+selection_criteria: {  }
+selection_logic: and
+weight: 0
+relationships: {  }

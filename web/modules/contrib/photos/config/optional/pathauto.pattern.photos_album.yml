@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: photos_album
+label: Album
+type: 'canonical_entities:node'
+pattern: 'photos/[node:title]'
+selection_criteria:
+  ebd3c918-0607-485e-82f0-d78ff55c5e0f:
+    id: node_type
+    bundles:
+      photos: photos
+    negate: false
+    context_mapping:
+      node: node
+    uuid: ebd3c918-0607-485e-82f0-d78ff55c5e0f
+selection_logic: and
+weight: -5
+relationships: {  }

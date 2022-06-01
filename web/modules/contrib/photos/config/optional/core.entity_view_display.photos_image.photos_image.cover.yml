@@ -1,0 +1,38 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.photos_image.cover
+    - field.field.photos_image.photos_image.field_image
+    - image.style.thumbnail
+  module:
+    - photos
+id: photos_image.photos_image.cover
+targetEntityType: photos_image
+bundle: photos_image
+mode: cover
+content:
+  field_image:
+    type: photos_image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: thumbnail
+      image_link: photos_album
+    third_party_settings: {  }
+  image:
+    type: image
+    weight: 0
+    label: hidden
+    settings:
+      image_style: thumbnail
+      image_link: content
+    region: content
+    third_party_settings: {  }
+hidden:
+  album_id: true
+  created: true
+  description: true
+  uid: true
+  weight: true

@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - photos
+id: photos_image.sort
+label: Sort
+targetEntityType: photos_image
+cache: true

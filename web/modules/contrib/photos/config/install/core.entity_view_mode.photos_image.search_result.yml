@@ -1,0 +1,9 @@
+langcode: en
+status: false
+dependencies:
+  module:
+    - photos
+id: photos_image.search_result
+label: 'Search result highlighting input'
+targetEntityType: photos_image
+cache: true

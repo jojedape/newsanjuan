@@ -1,0 +1,11 @@
+entity.photos_image.edit_form:
+  title: Edit
+  group: photos_image
+  route_name: entity.photos_image.edit_form
+  weight: 10
+
+entity.photos_image.delete_form:
+  title: Delete
+  group: photos_image
+  route_name: entity.photos_image.delete_form
+  weight: 20

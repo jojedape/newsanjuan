@@ -1,0 +1,39 @@
+photos.admin:
+  title: Photos
+  description: 'Manage photo entity and album privacy settings.'
+  parent: system.admin_structure
+  route_name: photos.admin
+photos.admin.config:
+  title: Photos
+  description: 'Configure global photos module settings.'
+  parent: system.admin_config_media
+  route_name: photos.admin.config
+entity.photos_image.field_ui_fields:
+  title: 'Manage fields'
+  parent: photos.admin
+  route_name: entity.photos_image.field_ui_fields
+  weight: 1
+entity.entity_form_display.photos_image.default:
+  title: 'Manage form display'
+  parent: photos.admin
+  route_name: entity.entity_form_display.photos_image.default
+  weight: 2
+entity.entity_view_display.photos_image.default:
+  title: 'Manage display'
+  parent: photos.admin
+  route_name: entity.entity_view_display.photos_image.default
+  weight: 3
+
+entity.photos_image.collection:
+  title: Photos
+  description: 'List of all site photos and links to add photos.'
+  parent: system.admin_content
+  route_name: entity.photos_image.collection
+photos.image.add:
+  title: 'Add photo'
+  parent: entity.photos_image.collection
+  route_name: photos.image.add
+photos.import.directory:
+  title: 'Import photos'
+  parent: entity.photos_image.collection
+  route_name: photos.import.directory

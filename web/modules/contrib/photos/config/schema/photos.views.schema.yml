@@ -1,0 +1,21 @@
+views.field.photos_image_cover:
+  type: views_field
+  label: 'Album cover'
+  mapping:
+    link_photo:
+      type: string
+      label: 'Link this field to the album or photo.'
+    view_mode:
+      type: string
+      label: 'The view mode to display this field.'
+
+views.field.photos_image_set_cover:
+  type: views_field
+  label: 'Set as album cover link'
+  mapping:
+    absolute:
+      type: boolean
+      label: 'Absolute link.'
+    output_url_as_text:
+      type: boolean
+      label: 'Output URL as text.'

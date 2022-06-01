@@ -1,0 +1,22 @@
+/* ---------------------------------------------------------------------------*/
+/* MOBILE FIRST - page/_page-user.scss                                      */
+/* ---------------------------------------------------------------------------*/
+@charset "UTF-8";
+////////////////////////////////////////////////////// BREAKPOINT EXTRA SMALL UP
+@include media-breakpoint-up(xs) {
+  //////////////////////////////////////////////////////////////////////////////
+  // [ COMMON ]
+  .path-user {
+    .field--name-user-picture img {
+      border-radius: 50%;
+    }
+    #block-bootstrap-for-drupal-page-title,
+    .profile {
+      text-align: center;
+    }
+    .profile h4 {
+      display: block;
+    }
+
+  }
+}

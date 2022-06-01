@@ -1,0 +1,204 @@
+# Schema for the configuration files of the photos module.
+
+photos.settings:
+  type: config_object
+  label: 'Photos settings'
+  mapping:
+    album_link_override:
+      type: string
+      label: 'Override default album link with a view.'
+    album_photo_limit:
+      type: integer
+      label: 'Album photo limit.'
+    multi_upload_default_field:
+      type: string
+      label: 'Multi-upload field.'
+    node_field_album_photos_list_view:
+      type: string
+      label: 'Default view for album photos list field on photos node.'
+    photos_access_photos:
+      type: boolean
+      label: 'Enable photos access.'
+    photos_additional_sizes:
+      type: integer
+      label: 'Number of sizes to select from.'
+    photos_album_column_count:
+      type: integer
+      label: 'Number of columns in album grid view.'
+    photos_album_display_type:
+      type: string
+      label: 'Album display type, list or grid.'
+    photos_clean_title:
+      type: boolean
+      label: 'Clean filenames when used as image title.'
+    photos_cover_imagesize:
+      type: string
+      label: 'Default cover image size.'
+    photos_display_colorbox_max_height:
+      type: integer
+      label: 'Default max height for colorbox galleries.'
+    photos_display_colorbox_max_width:
+      type: integer
+      label: 'Default max width for colorbox galleries.'
+    photos_display_full_imagesize:
+      type: string
+      label: 'Default full view image size.'
+    photos_display_full_viewnum:
+      type: integer
+      label: 'Default number of thumbnails to display on full node view.'
+    photos_display_imageorder:
+      type: string
+      label: 'Default image order.'
+    photos_display_list_imagesize:
+      type: string
+      label: 'Default image style on album list view.'
+    photos_display_page_display:
+      type: integer
+      label: 'Type of display on node full view.'
+    photos_display_page_user:
+      type: boolean
+      label: 'Allow user to edit node page settings.'
+    photos_display_teaser_display:
+      type: integer
+      label: 'Type of display on node teaser view.'
+    photos_display_teaser_imagesize:
+      type: string
+      label: 'Default image style for node teaser view.'
+    photos_display_teaser_user:
+      type: boolean
+      label: 'Allow user to edit teaser settings.'
+    photos_display_teaser_viewnum:
+      type: integer
+      label: 'Default number of thumbnails to display on teaser node view.'
+    photos_display_user:
+      type: boolean
+      label: 'Allow user to edit individual album settings.'
+    photos_display_view_imagesize:
+      type: string
+      label: 'Default image style for album view.'
+    photos_display_viewpager:
+      type: integer
+      label: 'Number of images to display on album page.'
+    photos_image_count:
+      type: boolean
+      label: 'Enable image count.'
+    photos_legacy_view_mode:
+      type: boolean
+      label: 'Enable legacy view mode.'
+    photos_num:
+      type: integer
+      label: 'Number of fields on the classic upload form.'
+    photos_pager_imagesize:
+      type: string
+      label: 'Image style for photo information block pager.'
+    photos_plupload_status:
+      type: boolean
+      label: 'Enable plupload module integration.'
+    photos_size:
+      type: sequence
+      label: 'Image style options available in album node settings.'
+      sequence:
+        type: mapping
+        mapping:
+          style:
+            type: string
+            label: 'Image style.'
+          name:
+            type: string
+            label: 'Size name.'
+    photos_size_max:
+      type: string
+      label: 'Maximum image dimensions.'
+    photos_upzip:
+      type: boolean
+      label: 'Enable zip file upload.'
+    photos_user_count_cron:
+      type: boolean
+      label: 'Enable image count during cron.'
+    photos_pnum_authenticated:
+      type: integer
+      label: 'Default number of albums allowed for authenticated users.'
+    photos_pnum_administrator:
+      type: integer
+      label: 'Default number of albums allowed for administrator users.'
+    upload_form_mode:
+      type: integer
+      label: 'Classic upload form, entity form or any other options.'
+    user_albums_link_override:
+      type: string
+      label: 'Override default user albums view.'
+    user_images_link_override:
+      type: string
+      label: 'Override default user images view.'
+    view_mode_rearrange_album_page:
+      type: string
+      label: 'The view mode to use for images on this page.'
+    view_mode_rearrange_image_page:
+      type: string
+      label: 'The view mode to use for images on this page.'
+
+field.formatter.settings.photos_album:
+  type: mapping
+  label: 'Photos album display type.'
+  mapping:
+    photos_display_type:
+      type: string
+      label: 'Display type'
+
+field.formatter.settings.photos_image:
+  type: mapping
+  label: 'Photos image display type.'
+  mapping:
+    image_link:
+      type: string
+      label: 'Link image to'
+    image_style:
+      type: string
+      label: 'Image style'
+
+field.formatter.settings.photos_image_media:
+  type: mapping
+  label: 'Photos image media display type.'
+  mapping:
+    image_link:
+      type: string
+      label: 'Link image to'
+    image_style:
+      type: string
+      label: 'Image style'
+
+media.type.photos:
+  type: config_entity
+  mapping:
+    id:
+      type: string
+      label: 'Machine name'
+    label:
+      type: label
+      label: 'Name'
+    description:
+      type: text
+      label: 'Description'
+    source:
+      type: string
+      label: 'Source'
+    source_configuration:
+      type: media.source.[%parent.source]
+      mapping:
+        source_field:
+          type: string
+          label: 'Source field'
+    queue_thumbnail_downloads:
+      type: boolean
+      label: 'Whether the thumbnail downloads should be queued'
+    new_revision:
+      type: boolean
+      label: 'Whether a new revision should be created by default'
+    field_map:
+      type: sequence
+      label: 'Field map'
+      sequence:
+        type: string
+    source_field:
+      type: string
+      label: 'Source field'

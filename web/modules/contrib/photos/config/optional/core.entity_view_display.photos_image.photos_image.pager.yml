@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.photos_image.pager
+    - field.field.photos_image.photos_image.field_image
+    - image.style.thumbnail
+  module:
+    - image
+    - photos
+id: photos_image.photos_image.pager
+targetEntityType: photos_image
+bundle: photos_image
+mode: pager
+content:
+  field_image:
+    type: image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: thumbnail
+      image_link: ''
+    third_party_settings: {  }
+hidden:
+  album_id: true
+  created: true
+  description: true
+  uid: true
+  weight: true

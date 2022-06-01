@@ -1,0 +1,15 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - photos
+id: photos
+label: 'Album photos'
+description: 'Use photo albums as reusable media.'
+source: photos
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_photos
+field_map:
+  name: name

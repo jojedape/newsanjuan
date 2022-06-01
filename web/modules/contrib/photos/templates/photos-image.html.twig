@@ -1,0 +1,97 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a photos_image.
+ *
+ * Available variables:
+ * - photos_image: The photos_image entity with limited access to object
+ *   properties and methods. Only method names starting with "get", "has",
+ *   or "is" and a few common methods such as "id", "label", and "bundle" are
+ *   available. For example:
+ *   - photos_image.getCreatedTime() will return the photos_image creation timestamp.
+ *   - photos_image.hasField('field_example') returns TRUE if the photos_image bundle
+ *     includes field_example. (This does not indicate the presence of a value in this
+ *     field.)
+ *   - photos_image.isPublished() will return whether the image is published or not.
+ * - photos_album_node: The node entity with limited access to object properties and methods.
+ *   - photos_album_node.label is the album title.
+ * - photos_album_node.album:
+ *   - photos_album_node.album.count is the number of images in the album.
+ *   - photos_album_node.album.cover is the album cover image.
+ * - label: (optional) The title of the image.
+ * - content: All photos_image items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the printing
+ *   of a given child element.
+ * - url: Direct URL of the current photos_image.
+ * - attributes: HTML attributes for the containing element.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ *   This is required to enable inline quick edit.
+ * - view_mode: View mode; for example, "cover", "full", "pager" or "sort".
+ * - page: Flag for the full page state. Will be true if view_mode is 'full'.
+ * - logged_in: Flag for authenticated user status. Will be true when the
+ *   current user is a logged-in member.
+ * - is_admin: Flag for admin user status. Will be true when the current user
+ *   is an administrator.
+ * - disableImageVisitCount: True if image visit count is disabled.
+ * - pager: The previous (prevUrl) and next (nextUrl) image URL if any.
+ *   - pager.prevUrl: Previous photos_image URL.
+ *   - pager.nextURL: Next photos_image URL.
+ * - setToCover: Set to cover link.
+ * - visitCount: The number of visits.
+ * - visitCountTxt: The default visit text "visit" or "visits".
+ *
+ * @see template_preprocess_photos_image()
+ *
+ * @ingroup themeable
+ */
+#}
+<article{{ attributes }}>
+
+  <div class="photos-links-info">
+    {% if not disableImageVisitCount %}
+      <span id="photos-visits-{{ photos_image.id() }}" class="photos-visits hidden">
+      {{ visitCount }}
+    </span>
+    {% endif %}
+
+    {% if commentCount %}
+      {{ commentCount }}
+    {% endif %}
+
+    {% if setToCover %}
+      {{ setToCover }}
+    {% endif %}
+  </div>
+
+  {% if pager.prevUrl or pager.nextUrl %}
+    <div class="photos-link-pager">
+      {% if pager.prevUrl %}
+        <div class="photos-pager-left">
+          <a href="{{ pager.prevUrl }}">&laquo; {{ 'previous'|t }}</a>
+        </div>
+      {% endif %}
+
+      {% if pager.nextUrl %}
+        <div class="photos-pager-right">
+          <a href="{{ pager.nextUrl }}">{{ 'next'|t }} &raquo;</a>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {{ title_suffix }}
+
+  <div{{ content_attributes }}>
+    {% if view_mode == 'list' %}
+      <h2 class="photos-list-view-title">
+        {{ label }}
+      </h2>
+    {% endif %}
+    {{ content }}
+  </div>
+
+  {{ legacy_comments }}
+
+</article>

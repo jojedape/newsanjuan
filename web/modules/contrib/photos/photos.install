@@ -1,0 +1,366 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the Photos module.
+ */
+
+use Drupal\Core\Annotation\PluralTranslation;
+use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\views\Entity\View;
+use Symfony\Component\Yaml\Yaml;
+
+/**
+ * Implements hook_schema().
+ */
+function photos_schema() {
+  // @todo migrate fid to {photos_image}.id cover_id.
+  // @todo migrate pid to album_id.
+  // @todo migrate wid to weight.
+  $schema['photos_album'] = [
+    'fields' => [
+      'album_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'cover_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'weight' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'count' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'data' => [
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'big',
+      ],
+    ],
+    'indexes' => [
+      'cover_id' => ['cover_id'],
+      'weight' => ['weight'],
+    ],
+    'primary key' => ['album_id'],
+  ];
+
+  // @todo migrate photos_image to new photos_image entity.
+  // @todo migrate comments to new photos_image entity comment field.
+  // @todo migrate {photos_image}.count to {photos_count}. Note that
+  // {photso_count} is counting photos and {photos_image}.count is counting
+  // views.
+  // @todo look into core statistics API to replace or supplement photos_count?
+  // @see https://www.drupal.org/project/photos/issues/3101624
+  $schema['photos_count'] = [
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'cid' => [
+        'type' => 'int',
+        'description' => 'Count entity id.',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'changed' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'type' => [
+        'type' => 'varchar',
+        'length' => 12,
+        'default' => '',
+        'not null' => TRUE,
+      ],
+      'value' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+    'indexes' => [
+      'cid' => ['cid'],
+      'type' => ['type'],
+      'value' => ['value'],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function photos_install() {
+  \Drupal::messenger()->addMessage(t("Photos settings are available under admin/structure/photos."));
+  \Drupal::messenger()->addMessage(t("New permissions are available for Photos admin/people/permissions#module-photos."));
+}
+
+/**
+ * Prep for new photos_image entity.
+ */
+function photos_update_8501(&$sandbox) {
+  // Check if this update needs to run.
+  if (\Drupal::database()->schema()->fieldExists('photos_image', 'fid')) {
+    // Move photos_image to photos_image_tmp.
+    // @see photos_post_update_migrate_photos_image_entity_1().
+    \Drupal::database()
+      ->schema()
+      ->renameTable('photos_image', 'photos_image_tmp');
+
+    // Rename {photos_album} fields.
+    $album_id_field = [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+    ];
+    \Drupal::database()->schema()->changeField('photos_album', 'pid', 'album_id', $album_id_field);
+    $cover_id_field = [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ];
+    \Drupal::database()->schema()->changeField('photos_album', 'fid', 'cover_id', $cover_id_field);
+    $weight_field = [
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+    ];
+    \Drupal::database()->schema()->changeField('photos_album', 'wid', 'weight', $weight_field);
+
+    // Create new photos_image entity.
+    $definition_update_manager = Drupal::entityDefinitionUpdateManager();
+
+    // Basically the entity plugin definition for the custom entity, converted
+    // to an associative array.
+    $entity_definition = new ContentEntityType([
+      "id" => "photos_image",
+      "label" => new TranslatableMarkup("Photo"),
+      "label_collection" => new TranslatableMarkup("Photos"),
+      "label_singular" => new TranslatableMarkup("photo"),
+      "label_plural" => new TranslatableMarkup("photos"),
+      "label_count" => new PluralTranslation([
+        "singular" => "@count photo",
+        "plural" => "@count photos",
+      ]),
+      "handlers" => [
+        "storage" => "Drupal\photos\PhotosImageStorage",
+        "storage_schema" => "Drupal\photos\PhotosImageStorageSchema",
+        "form" => [
+          "default" => "Drupal\photos\Form\PhotosImageEditForm",
+          "add" => "Drupal\photos\Form\PhotosImageAddForm",
+          "edit" => "Drupal\photos\Form\PhotosImageEditForm",
+          "delete" => "Drupal\photos\Form\PhotosImageDeleteForm",
+          "delete-multiple-confirm" => "Drupal\Core\Entity\Form\DeleteMultipleForm",
+        ],
+        "access" => "Drupal\photos\PhotosAccessControlHandler",
+        "views_data" => "Drupal\photos\PhotosViewsData",
+        "list_builder" => "Drupal\photos\PhotosImageListBuilder",
+        "route_provider" => [
+          "html" => "Drupal\photos\Entity\PhotosRouteProvider",
+        ],
+      ],
+      "base_table" => "photos_image",
+      "data_table" => "photos_image_field_data",
+      "revision_table" => "photos_image_revision",
+      "revision_data_table" => "photos_image_field_revision",
+      "translatable" => TRUE,
+      "show_revision_ui" => TRUE,
+      "entity_keys" => [
+        "id" => "id",
+        "revision" => "revision_id",
+        "label" => "title",
+        "langcode" => "langcode",
+        "uuid" => "uuid",
+        "status" => "status",
+        "published" => "status",
+        "uid" => "uid",
+        "owner" => "uid",
+      ],
+      "revision_metadata_keys" => [
+        "revision_user" => "revision_user",
+        "revision_created" => "revision_created",
+        "revision_log_message" => "revision_log_message",
+      ],
+      "admin_permission" => "administer nodes",
+      "common_reference_target" => TRUE,
+      "field_ui_base_route" => "photos.admin",
+      "links" => [
+        "canonical" => "/photos/{node}/{photos_image}",
+        "add-form" => "/photos/image/add",
+        "delete-form" => "/photos/{node}/{photos_image}/delete",
+        "edit-form" => "/photos/{node}/{photos_image}/edit",
+        "version-history" => "/photos/{node}/{photos_image}/revisions",
+        "revision" => "/photos/{node}/{photos_image}/revisions/{photos_image_revision}/view",
+      ],
+    ]);
+
+    // Finally you need to manually set the class to where the entity plugin
+    // definition is.
+    $entity_definition->setClass('Drupal\photos\Entity\PhotosImage');
+
+    // Create new entity type.
+    $definition_update_manager->installEntityType($entity_definition);
+
+    // Add photos_image field.
+    // @todo update field path settings based on existing path settings.
+    // @todo replace old field path tokens with new tokens.
+    // @todo add field display and form display.
+    $field_storage = FieldStorageConfig::loadByName('photos_image', 'field_image');
+    $field = FieldConfig::loadByName('photos_image', 'photos_image', 'field_image');
+    if (empty($field)) {
+      if (empty($field_storage)) {
+        $field_storage = FieldStorageConfig::create([
+          'entity_type' => 'photos_image',
+          'field_name' => 'field_image',
+          'type' => 'image',
+          'settings' => [
+            'target_type' => 'file',
+          ],
+          'cardinality' => 1,
+        ]);
+        $field_storage->save();
+      }
+      $field = FieldConfig::create([
+        'field_storage' => $field_storage,
+        'bundle' => 'photos_image',
+        'label' => 'Image',
+        'settings' => [
+          'file_directory' => 'photos/images',
+          'file_extensions' => 'png gif jpg jpeg',
+        ],
+      ]);
+      $field->save();
+    }
+  }
+}
+
+/**
+ * Create default view modes and views if needed.
+ */
+function photos_update_8502(&$sandbox) {
+  $message = NULL;
+
+  $all_created = FALSE;
+  // Create view modes.
+  if (!EntityViewMode::load('photos_image.cover')) {
+    // Album cover.
+    EntityViewMode::create([
+      'id' => 'photos_image.cover',
+      'targetEntityType' => 'photos_image',
+      'label' => 'Album cover',
+    ])->setStatus(TRUE)->save();
+  }
+  if (!EntityViewMode::load('photos_image.full')) {
+    // Full.
+    EntityViewMode::create([
+      'id' => 'photos_image.full',
+      'targetEntityType' => 'photos_image',
+      'label' => 'Full content',
+    ])->save();
+  }
+  if (!EntityViewMode::load('photos_image.list')) {
+    // List.
+    EntityViewMode::create([
+      'id' => 'photos_image.list',
+      'targetEntityType' => 'photos_image',
+      'label' => 'List',
+    ])->setStatus(TRUE)->save();
+  }
+  if (!EntityViewMode::load('photos_image.pager')) {
+    // Pager.
+    EntityViewMode::create([
+      'id' => 'photos_image.pager',
+      'targetEntityType' => 'photos_image',
+      'label' => 'Pager',
+    ])->save();
+  }
+  if (!EntityViewMode::load('photos_image.search_result')) {
+    // Search result highlighting input.
+    EntityViewMode::create([
+      'id' => 'photos_image.search_result',
+      'targetEntityType' => 'photos_image',
+      'label' => 'Search result highlighting input',
+    ])->save();
+  }
+  if (!EntityViewMode::load('photos_image.search_result_image')) {
+    // Search Result Image.
+    EntityViewMode::create([
+      'id' => 'photos_image.search_result_image',
+      'targetEntityType' => 'photos_image',
+      'label' => 'Search Result Image',
+    ])->save();
+  }
+  if (!EntityViewMode::load('photos_image.sort')) {
+    // Sort.
+    EntityViewMode::create([
+      'id' => 'photos_image.sort',
+      'targetEntityType' => 'photos_image',
+      'label' => 'Sort',
+    ])->save();
+  }
+
+  // Create new views.
+  if (\Drupal::moduleHandler()->moduleExists('views')) {
+    $all_created = TRUE;
+    // Only create if the photos view doesn't exist and views is enabled.
+    if (!View::load('photos')) {
+      $config_path = drupal_get_path('module', 'photos') . '/config/optional/views.view.photos.yml';
+      $data = Yaml::parseFile($config_path);
+      \Drupal::configFactory()->getEditable('views.view.photos')->setData($data)->save(TRUE);
+    }
+    else {
+      $all_created = FALSE;
+    }
+    // Album view.
+    if (!View::load('photos_album')) {
+      $config_path = drupal_get_path('module', 'photos') . '/config/optional/views.view.photos_album.yml';
+      $data = Yaml::parseFile($config_path);
+      \Drupal::configFactory()->getEditable('views.view.photos_album')->setData($data)->save(TRUE);
+    }
+    else {
+      $all_created = FALSE;
+    }
+    // Album list view.
+    if (!View::load('photos_album_list')) {
+      $config_path = drupal_get_path('module', 'photos') . '/config/optional/views.view.photos_album_list.yml';
+      $data = Yaml::parseFile($config_path);
+      \Drupal::configFactory()->getEditable('views.view.photos_album_list')->setData($data)->save(TRUE);
+    }
+    else {
+      $all_created = FALSE;
+    }
+  }
+
+  if ($all_created) {
+    $message = 'New views and view modes have been created.';
+  }
+  else {
+    $message = 'Some of the views already exist or could not be created and may
+      need to be created manually (if needed).';
+  }
+
+  return $message;
+}

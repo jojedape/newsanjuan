@@ -1,0 +1,13 @@
+photos.image.add:
+  route_name: photos.image.add
+  title: 'Add photo'
+  weight: 1
+  appears_on:
+    - entity.photos_image.collection
+
+photos.import.directory:
+  route_name: photos.import.directory
+  title: 'Import photos'
+  weight: 2
+  appears_on:
+    - entity.photos_image.collection

@@ -1,0 +1,9 @@
+langcode: en
+status: false
+dependencies:
+  module:
+    - photos
+id: photos_image.search_result_image
+label: 'Search Result Image'
+targetEntityType: photos_image
+cache: true
